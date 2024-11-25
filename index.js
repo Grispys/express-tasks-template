@@ -117,6 +117,21 @@ app.get('/tasks', async (req, res) => {
     
 });
 
+app.get('/updateTasks', async(req,res)=>{
+    res.render('updateTasks')
+})
+
+app.get('/deleteTasks', async (req, res) =>{
+    const tasks = await displayTasks()
+    res.render('deleteTasks', {tasks})
+})
+
+app.post('/deleteTasks', async(req, res)=>{
+    const {taskId} = req.body;
+    await deleteTask(taskId)
+    res.redirect('/deleteTasks');
+});
+
 
 
 
@@ -131,30 +146,6 @@ app.post('/tasks', (request, response) => {
     insertTask(description, status)
     response.redirect('/tasks')
 });
-
-
-
-
-// PUT /tasks/:id - Update a task's status
-app.put('/tasks/:id', (request, response) => {
-    const taskID = parseInt(request.params.id, 10);
-    const { status } = request.body;
-
-    updateTask(taskID, status);
-});
-
-
-
-
-
-// DELETE /tasks/:id - Delete a task
-app.delete('/tasks/:id', (request, response) => {
-    const taskId = parseInt(request.params.id, 10);
-    deleteTask(taskId);
-});
-
-
-
 
 
 app.listen(PORT, () => {

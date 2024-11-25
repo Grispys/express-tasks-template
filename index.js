@@ -1,3 +1,10 @@
+// I THINK this is what was required? i'm not entirely sure. all was stated was to have a table creation function, and update the endpoints to use postgres instead of in memory. I
+// DID do that, and made pages for each of the tasks to actually interact with the database. I didn't know how to do to it otherwise; without pages to use to send values from, atleast.
+// please tell me this is okay, and not wrong. this is just how to project made sense to me.
+
+
+
+
 const express = require('express');
 const app = express();
 const path = require("path");

@@ -1,1 +1,18 @@
 <h1>This is where u update taskys</h1>
+
+<h4>Task List:</h4>
+<ul>
+  <% tasks.forEach(task => { %>
+    <li><%= task.id %>: <%= task.description %> - <%= task.status %>  
+		<form action="/updateTasks" method="POST">
+			<input type="hidden" name="taskId" value = "<%= task.id %>">
+			<label for="status_<%= task.id %>">New Status:</label><br>
+            <input type="text" id="status_<%= task.id %>" name="status" required>
+			<button type="submit">Update Task</button>
+		</form></li>
+  <% }); %>
+</ul>
+
+<form action="/" method="GET">
+	<button type="submit">Go back</button>
+</form>

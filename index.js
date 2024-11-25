@@ -118,7 +118,8 @@ app.get('/tasks', async (req, res) => {
 });
 
 app.get('/updateTasks', async(req,res)=>{
-    res.render('updateTasks')
+    const tasks = await displayTasks();
+    res.render('updateTasks', {tasks})
 })
 
 app.get('/deleteTasks', async (req, res) =>{
@@ -132,8 +133,12 @@ app.post('/deleteTasks', async(req, res)=>{
     res.redirect('/deleteTasks');
 });
 
-
-
+app.post('/updateTasks', async(req,res) =>{
+    // console.log("got:", req.body); used this for debugging, works correctly now
+    const {taskId, status} = req.body;
+    await updateTask(taskId, status);
+    res.redirect('/updateTasks')
+});
 
 
 // POST /tasks - Add a new task

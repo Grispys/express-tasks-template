@@ -4,7 +4,11 @@
 <h4>Task List:</h4>
 <ul>
   <% tasks.forEach(task => { %>
-    <li><%= task.id %>: <%= task.description %> - <%= task.status %> 	<form action="/deleteTasks" method="POST"><input type="hidden" name="taskId" value = "<%= task.id %>"><button type="submit">Delete Task</button></form></li>
+    <li><%= task.id %>: <%= task.description %> - <%= task.status %> 	
+		<form action="/deleteTasks" method="POST">
+			<input type="hidden" name="taskId" value = "<%= task.id %>">
+			<button type="submit">Delete Task</button>
+		</form></li>
   <% }); %>
 </ul>
 

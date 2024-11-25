@@ -1,8 +1,13 @@
 const express = require('express');
 const app = express();
+const path = require("path");
 const PORT = 3000;
-// import pool for postgres
+// import pool for postgres and ejs stuff
 const { Pool } = require('pg');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // set up hook for postgres database
 const pool = new Pool({
@@ -28,6 +33,8 @@ async function createTable(){
 
 }
 
+// immediately call that function to create tables
+createTable();
 
 
 
@@ -39,7 +46,7 @@ app.use(express.json());
 // instead of defining tasks here, make function to insert da stuff instead
 
 async function insertTask(description, status){
-    let query = `INSERT INTO Tasks(description, status) VALUES ('${description}', ${status})`
+    let query = `INSERT INTO Tasks(description, status) VALUES ('${description}', '${status}')`
     try {
         await pool.query(query)
         console.log("Successfully added task to the table")
@@ -79,11 +86,12 @@ async function displayTasks(){
     let query = `SELECT * FROM Tasks`;
 
     try{
-        let tasks = await pool.query(query)
+        let result = await pool.query(query)
         console.log("Tasks: ") //temporary way to display, will move to the webpage later
-        tasks.rows.forEach((row) =>{
+        result.rows.forEach((row) =>{
             console.log(row.id, " " + row.description + " " + row.status);
         })
+        return result.rows;
     } catch (error){
         console.error("Error displaying the tasks: ", error)
     }
@@ -98,9 +106,15 @@ async function displayTasks(){
 
 
 
+app.get('/', (req, res) =>{
+    res.render('index');
+})
+
 // GET /tasks - Get all tasks
-app.get('/tasks', (req, res) => {
-    displayTasks()
+app.get('/tasks', async (req, res) => {
+    const tasks = await displayTasks();
+    res.render('tasks', {tasks})
+    
 });
 
 
@@ -109,12 +123,13 @@ app.get('/tasks', (req, res) => {
 
 // POST /tasks - Add a new task
 app.post('/tasks', (request, response) => {
-    const { id, description, status } = request.body;
-    if (!id || !description || !status) {
-        return response.status(400).json({ error: 'All fields (id, description, status) are required' });
+    const { description, status } = request.body;
+    if (!description || !status) {
+        return response.status(400).json({ error: 'All fields (description, status) are required' });
     }
 
-    insertTask(id, description, status)
+    insertTask(description, status)
+    response.redirect('/tasks')
 });
 
 
